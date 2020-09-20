@@ -1,7 +1,7 @@
 cabal-version:      2.2
 name:               inhibit-screensaver
 version:            0.0.0.0
-synopsis:           Inhibit the screensaver if a script exits cleanly
+synopsis:           Inhibit the screensaver if a command exits successfully
 license:            BSD-2-Clause
 license-file:       LICENSE
 author:             Peter Jones <pjones@devalot.com>
@@ -74,6 +74,18 @@ common dependencies
     relude (Relude as Prelude)
 
 --------------------------------------------------------------------------------
+library
+  import:          options, dependencies, extensions
+  hs-source-dirs:  src
+  exposed-modules:
+    System.ScreenSaver.Inhibit.DBus
+    System.ScreenSaver.Inhibit.LoginCtl
+    System.ScreenSaver.Inhibit.Process
+    System.ScreenSaver.Inhibit.XSet
+
+--------------------------------------------------------------------------------
 executable inhibit-screensaver
-  import:  options, extensions, dependencies
-  main-is: Main.hs
+  import:         options, extensions, dependencies
+  build-depends:  inhibit-screensaver
+  hs-source-dirs: app
+  main-is:        Main.hs
