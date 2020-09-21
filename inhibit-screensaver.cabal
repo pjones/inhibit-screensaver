@@ -65,9 +65,9 @@ common dependencies
   build-depends:
     , base                  >=4.9  && <5
     , dbus                  ^>=1.2
-    , optparse-applicative  ^>=0.15
+    , optparse-applicative  >=0.14 && <0.16
     , process               ^>=1.6
-    , relude                ^>=0.7
+    , relude                >=0.5  && <0.8
 
   mixins:
     base hiding (Prelude),
