@@ -106,6 +106,7 @@ main = do
   where
     go :: Options -> DBus.Client -> IO ()
     go options@Options {..} dbus = forever $ do
+      threadDelay (optionsFreq * 1000000)
       unlessM (screensaverIsActive options) $
         Proc.exec optionsExec optionsArgs >>= \case
           True -> do
@@ -118,5 +119,3 @@ main = do
             when (optionsActivate) $ do
               XSet.activate
               LoginCtl.activate
-
-      threadDelay (optionsFreq * 1000000)
