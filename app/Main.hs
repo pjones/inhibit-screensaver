@@ -107,15 +107,25 @@ main = do
     go :: Options -> DBus.Client -> IO ()
     go options@Options {..} dbus = forever $ do
       threadDelay (optionsFreq * 1000000)
-      unlessM (screensaverIsActive options) $
-        Proc.exec optionsExec optionsArgs >>= \case
-          True -> do
-            let reason = "command " <> optionsExec <> " exited with success"
-            XSet.inhibit
-            DBus.inhibit reason dbus
-          False -> do
-            XSet.uninhibit
-            DBus.uninhibit dbus
-            when (optionsActivate) $ do
-              XSet.activate
-              LoginCtl.activate
+      active <- screensaverIsActive options
+      if active
+        then uninhibit dbus
+        else test options dbus
+
+    test :: Options -> DBus.Client -> IO ()
+    test Options {..} dbus =
+      Proc.exec optionsExec optionsArgs >>= \case
+        True -> do
+          let reason = "command " <> optionsExec <> " exited with success"
+          XSet.inhibit
+          DBus.inhibit reason dbus
+        False -> do
+          uninhibit dbus
+          when (optionsActivate) $ do
+            XSet.activate
+            LoginCtl.activate
+
+    uninhibit :: DBus.Client -> IO ()
+    uninhibit dbus = do
+      XSet.uninhibit
+      DBus.uninhibit dbus
