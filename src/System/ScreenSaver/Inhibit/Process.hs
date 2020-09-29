@@ -19,26 +19,37 @@ where
 
 import Control.Exception (IOException, catch)
 import System.Exit (ExitCode (..))
+import System.IO (hFlush)
 import qualified System.Process as Proc
+import System.Timeout (timeout)
 
 -- | Execute the command and return 'True' if the screensaver should
 -- be inhibited.
 --
 -- @since 0.0.0.0
-exec :: String -> [String] -> IO Bool
-exec name args = catch go handle
+exec :: Maybe Int -> String -> [String] -> IO Bool
+exec waitSec name args = catch go handle
   where
     go :: IO Bool
     go = do
       putTextLn ("starting process: " <> toText (intercalate " " $ name : args))
+      hFlush stdout
+
       (_, _, _, process) <- Proc.proc name args & Proc.createProcess
-      Proc.waitForProcess process >>= \case
-        ExitSuccess -> do
-          putTextLn "process exited with success"
-          pure True
-        ExitFailure e -> do
-          putTextLn ("process existed with failure code " <> show e)
-          pure False
+
+      timeout
+        (maybe (-1) (* 1000000) waitSec)
+        (Proc.waitForProcess process)
+        >>= \case
+          Nothing -> do
+            putTextLn "process timed out"
+            pure False
+          Just ExitSuccess -> do
+            putTextLn "process exited with success"
+            pure True
+          Just (ExitFailure e) -> do
+            putTextLn ("process existed with failure code " <> show e)
+            pure False
 
     handle :: IOException -> IO Bool
     handle e = do

@@ -23,4 +23,4 @@ import System.ScreenSaver.Inhibit.Process (exec)
 --
 -- @since 0.0.0.0
 activate :: IO ()
-activate = void (exec "loginctl" ["lock-session"])
+activate = void (exec (Just 30) "loginctl" ["lock-session"])

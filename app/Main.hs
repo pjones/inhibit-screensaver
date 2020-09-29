@@ -17,12 +17,15 @@ module Main
   )
 where
 
-import Control.Concurrent (threadDelay)
+import Control.Concurrent (myThreadId, threadDelay, throwTo)
 import qualified Options.Applicative as O
+import System.Exit (ExitCode (..))
+import System.IO (BufferMode (LineBuffering), hSetBuffering)
 import qualified System.ScreenSaver.Inhibit.DBus as DBus
 import qualified System.ScreenSaver.Inhibit.LoginCtl as LoginCtl
 import qualified System.ScreenSaver.Inhibit.Process as Proc
 import qualified System.ScreenSaver.Inhibit.XSet as XSet
+import qualified System.Signal as Signal
 
 -- | Command line options.
 data Options = Options
@@ -85,10 +88,9 @@ options =
 
 -- | Return 'True' if the screensaver is currently active.
 screensaverIsActive :: Options -> IO Bool
-screensaverIsActive =
-  optionsActiveTest >>> \case
-    Nothing -> pure False
-    Just script -> Proc.exec "sh" ["-c", script]
+screensaverIsActive Options {..} = case optionsActiveTest of
+  Nothing -> pure False
+  Just script -> Proc.exec (Just optionsFreq) "sh" ["-c", script]
 
 -- | Main.
 main :: IO ()
@@ -102,30 +104,37 @@ main = do
             ]
       )
 
-  DBus.withDBus (go options)
+  tid <- myThreadId
+  Signal.installHandler Signal.sigTERM (const $ throwTo tid ExitSuccess)
+
+  hSetBuffering stdout LineBuffering
+
+  DBus.withDBus $ \dbus ->
+    XSet.withXSet (go options dbus)
   where
-    go :: Options -> DBus.Client -> IO ()
-    go options@Options {..} dbus = forever $ do
+    go :: Options -> DBus.Client -> XSet.Client -> IO ()
+    go options@Options {..} dbus xset = forever $ do
+      putTextLn ("sleeping for " <> show optionsFreq <> " sec(s)")
       threadDelay (optionsFreq * 1000000)
       active <- screensaverIsActive options
       if active
-        then uninhibit dbus
-        else test options dbus
+        then uninhibit dbus xset
+        else test options dbus xset
 
-    test :: Options -> DBus.Client -> IO ()
-    test Options {..} dbus =
-      Proc.exec optionsExec optionsArgs >>= \case
+    test :: Options -> DBus.Client -> XSet.Client -> IO ()
+    test Options {..} dbus xset =
+      Proc.exec (Just optionsFreq) optionsExec optionsArgs >>= \case
         True -> do
           let reason = "command " <> optionsExec <> " exited with success"
-          XSet.inhibit
+          XSet.inhibit xset
           DBus.inhibit reason dbus
         False -> do
-          uninhibit dbus
+          uninhibit dbus xset
           when (optionsActivate) $ do
-            XSet.activate
+            XSet.activate xset
             LoginCtl.activate
 
-    uninhibit :: DBus.Client -> IO ()
-    uninhibit dbus = do
-      XSet.uninhibit
+    uninhibit :: DBus.Client -> XSet.Client -> IO ()
+    uninhibit dbus xset = do
+      XSet.uninhibit xset
       DBus.uninhibit dbus

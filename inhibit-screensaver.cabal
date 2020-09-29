@@ -68,6 +68,7 @@ common dependencies
     , optparse-applicative  >=0.14 && <0.16
     , process               ^>=1.6
     , relude                >=0.5  && <0.8
+    , signal                ^>=0.1
 
   mixins:
     base hiding (Prelude),
@@ -87,5 +88,6 @@ library
 executable inhibit-screensaver
   import:         options, extensions, dependencies
   build-depends:  inhibit-screensaver
+  ghc-options:    -threaded -rtsopts
   hs-source-dirs: app
   main-is:        Main.hs

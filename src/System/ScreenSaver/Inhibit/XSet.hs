@@ -13,7 +13,9 @@
 --
 -- License: BSD-2-Clause
 module System.ScreenSaver.Inhibit.XSet
-  ( inhibit,
+  ( Client,
+    withXSet,
+    inhibit,
     uninhibit,
     activate,
   )
@@ -21,20 +23,41 @@ where
 
 import System.ScreenSaver.Inhibit.Process (exec)
 
+-- | Internal data.
+--
+-- @since 0.0.0.0
+newtype Client = Client (IORef Bool)
+
+-- | Run a computation that expects a 'Client' value.
+--
+-- @since 0.0.0.0
+withXSet :: (Client -> IO a) -> IO a
+withXSet f = do
+  ref <- newIORef False
+  f (Client ref)
+
 -- | Inhibit the screensaver.
 --
 -- @since 0.0.0.0
-inhibit :: IO ()
-inhibit = void (exec "xset" ["s", "off"])
+inhibit :: Client -> IO ()
+inhibit (Client ref) =
+  unlessM (readIORef ref) $ do
+    void (exec (Just 30) "xset" ["s", "off"])
+    writeIORef ref True
 
 -- | Release the screensaver inhibit.
 --
 -- @since 0.0.0.0
-uninhibit :: IO ()
-uninhibit = void (exec "xset" ["s", "default"])
+uninhibit :: Client -> IO ()
+uninhibit (Client ref) =
+  whenM (readIORef ref) $ do
+    void (exec (Just 30) "xset" ["s", "default"])
+    writeIORef ref False
 
 -- | Activate the screensaver.
 --
 -- @since 0.0.0.0
-activate :: IO ()
-activate = void (exec "xset" ["s", "activate"])
+activate :: Client -> IO ()
+activate client = do
+  uninhibit client
+  void (exec (Just 30) "xset" ["s", "activate"])
