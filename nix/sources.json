@@ -12,27 +12,27 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nix-hs": {
-        "branch": "trunk",
+        "branch": "release-21.05",
         "description": "Haskell + nixpkgs = nix-hs",
         "homepage": "",
         "owner": "pjones",
         "repo": "nix-hs",
-        "rev": "cba1c7a6496fd3fd26bd80582837818fd3c1fd1b",
-        "sha256": "0y1dy4443873r71sypf5pkncnypvin4ylg1qapfdzsdka6yqvzzg",
+        "rev": "11e961e744b212b4e6d69406c003e43a58c487fc",
+        "sha256": "0xnxwsyxq8v5wgp8w65cr3lncv5s12mj5siybn7rffslkfraqw3i",
         "type": "tarball",
-        "url": "https://github.com/pjones/nix-hs/archive/cba1c7a6496fd3fd26bd80582837818fd3c1fd1b.tar.gz",
+        "url": "https://github.com/pjones/nix-hs/archive/11e961e744b212b4e6d69406c003e43a58c487fc.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
-        "branch": "nixos-20.03",
-        "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",
-        "homepage": "https://github.com/NixOS/nixpkgs",
-        "owner": "NixOS",
-        "repo": "nixpkgs-channels",
-        "rev": "773ef5ae78339db744b917c2b35d28812028bd8c",
-        "sha256": "0j07y007g2yk2mmp56xhdbwhjlnpdmp1lvsmx5nzfakcp8n3q7ci",
+        "branch": "nixos-21.05",
+        "description": "Nix Packages collection",
+        "homepage": "",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "eaba7870ffc3400eca4407baa24184b7fe337ec1",
+        "sha256": "115disiz4b08iw46cidc7lm0advrxn5g2ldmlrxd53zf03skyb2w",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/773ef5ae78339db744b917c2b35d28812028bd8c.tar.gz",
+        "url": "https://github.com/nixos/nixpkgs/archive/eaba7870ffc3400eca4407baa24184b7fe337ec1.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
