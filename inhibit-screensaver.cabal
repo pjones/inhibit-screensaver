@@ -11,6 +11,10 @@ homepage:           https://github.com/pjones/inhibit-screensaver
 bug-reports:        https://github.com/pjones/inhibit-screensaver/issues
 category:           System
 build-type:         Simple
+description:
+  @inhibit-screensaver@ executes a command at regular intervals.  If
+  the command exits successfully @inhibit-screensaver@ will acquire
+  an inhibit cookie to keep the screen saver from activating.
 
 --------------------------------------------------------------------------------
 extra-source-files:

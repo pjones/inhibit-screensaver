@@ -21,7 +21,7 @@ Available options:
 ## DESCRIPTION
 
 `inhibit-screensaver` executes a command at regular intervals.  If
-the command exists successfully `inhibit-screensaver` will acquire
+the command exits successfully `inhibit-screensaver` will acquire
 an inhibit cookie to keep the screen saver from activating.
 
 Since inhibiting the screensaver on Linux is a complete mess, the
