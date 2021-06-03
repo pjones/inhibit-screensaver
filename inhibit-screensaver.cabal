@@ -1,12 +1,12 @@
 cabal-version:      2.2
 name:               inhibit-screensaver
-version:            0.0.0.0
+version:            1.0.0
 synopsis:           Inhibit the screensaver if a command exits successfully
 license:            BSD-2-Clause
 license-file:       LICENSE
 author:             Peter Jones <pjones@devalot.com>
 maintainer:         Peter Jones <pjones@devalot.com>
-copyright:          Copyright (c) 2020 Peter J. Jones
+copyright:          Copyright (c) 2020-2021 Peter J. Jones
 homepage:           https://github.com/pjones/inhibit-screensaver
 bug-reports:        https://github.com/pjones/inhibit-screensaver/issues
 category:           System
@@ -14,8 +14,8 @@ build-type:         Simple
 
 --------------------------------------------------------------------------------
 extra-source-files:
-  README.md
   CHANGES.md
+  README.md
 
 --------------------------------------------------------------------------------
 source-repository head
@@ -36,8 +36,8 @@ common options
     -Werror=incomplete-uni-patterns -Werror=missing-home-modules
     -Widentities -Wmissing-export-lists -Wredundant-constraints
 
-  -- if flag(maintainer)
-  --   ghc-options: -Werror -fwrite-ide-info -hiedir=.hie
+  if flag(maintainer)
+    ghc-options: -fwrite-ide-info -hiedir=.hie
 
 --------------------------------------------------------------------------------
 common extensions
@@ -65,9 +65,9 @@ common dependencies
   build-depends:
     , base                  >=4.9  && <5
     , dbus                  ^>=1.2
-    , optparse-applicative  >=0.14 && <0.16
+    , optparse-applicative  >=0.14 && <0.17
     , process               ^>=1.6
-    , relude                >=0.5  && <0.8
+    , relude                ^>=1.0
     , signal                ^>=0.1
 
   mixins:

@@ -19,7 +19,6 @@ where
 
 import Control.Exception (IOException, catch)
 import System.Exit (ExitCode (..))
-import System.IO (hFlush)
 import qualified System.Process as Proc
 import System.Timeout (timeout)
 
@@ -32,7 +31,7 @@ exec waitSec name args = catch go handle
   where
     go :: IO Bool
     go = do
-      putTextLn ("starting process: " <> toText (intercalate " " $ name : args))
+      putTextLn ("starting process: " <> unwords (map toText (name : args)))
       hFlush stdout
 
       (_, _, _, process) <- Proc.proc name args & Proc.createProcess

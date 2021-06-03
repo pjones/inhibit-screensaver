@@ -21,7 +21,7 @@ module System.ScreenSaver.Inhibit.DBus
 where
 
 import Control.Exception (bracket)
-import qualified DBus as DBus
+import qualified DBus
 import qualified DBus.Client as DBus
 
 -- | DBus connection details.
@@ -38,11 +38,10 @@ data Client = Client
 --
 -- @since 0.0.0.0
 withDBus :: (Client -> IO a) -> IO a
-withDBus f =
+withDBus =
   bracket
     (Client <$> DBus.connectSession <*> newIORef Nothing)
     (\c -> uninhibit c >> DBus.disconnect (clientConnection c))
-    f
 
 -- | Inhibit the screensaver if it's not already inhibited.
 --
