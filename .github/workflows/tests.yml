@@ -8,13 +8,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macOS-latest, windows-latest]
+        os: [ubuntu-latest]
         cabal: ["3.4"]
         ghc: ["8.8", "8.10", "9.0"]
-        exclude:
-          # https://gitlab.haskell.org/ghc/ghc/-/issues/17926
-          - os: windows-latest
-            ghc: "8.8"
     steps:
       - name: Clone Repository
         uses: actions/checkout@v2
